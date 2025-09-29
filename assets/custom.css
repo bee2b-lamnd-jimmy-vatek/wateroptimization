@@ -1,0 +1,167 @@
+:root {
+    --background: #f1f1f2;
+    --background-header: #004f9b;
+    --background-input: white;
+    --bg-card: white;
+    --button-bg: #056fcf;
+    --select-bg:#ebf5ff;
+    --select-text: #007EFF;
+    --foreground: white;
+    --text-header: white;
+    --text-body: black;
+    --text-caption: #5a646e;
+    --text-link: #004f9b;
+    --icon: #34414d;
+    --scroll-bar: #99a0a5;
+    --icon-filter: invert(0);
+    --divider-primary: #bdc1c5;
+    --divider-secondary: #e1e3e6;
+
+    --disabled: #adb3b8;
+    --disabled-text: #34414d66;
+
+    --alarm-critical-400: #e700e7;
+    --alarm-error-400: #ff0000;
+    --alarm-warning-400: #f56b00;
+    --alarm-attention-400: #b68800;
+
+    --safe-normal-400: #389595;
+
+    --chart-violet: #4068ff;
+    --chart-cyan: #439eca;
+    --chart-yellow: #ffcd03;
+    --chart-green: #77d78b;
+    --chart-purple: #b379e1;
+}
+
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap');
+
+
+/* ----- Global ----- */
+body {
+    background: var(--background);
+    font-family: "Roboto", sans-serif;
+    color: var(--text-body);
+}
+
+.title {
+    background: var(--background-header);
+    color: var(--text-header);
+    padding: 1rem;
+    font-size: 28px;
+    font-weight: 700;
+}
+
+/* ----- Card (Col) ----- */
+.card-box {
+    background: var(--bg-card);
+    border: 1px solid var(--divider-secondary);
+    border-radius: 0.75rem;
+    padding: 1rem;
+    box-shadow: 1px 2px 4px rgba(0,0,0,0.05) !important;
+}
+
+/* ----- Header text ----- */
+.section-title {
+    font-weight: 600;
+    color: var(--text-link);
+    margin-bottom: 0.5rem;
+}
+
+/* ----- Labels ----- */
+.label {
+    font-size: 0.9rem;
+    color: var(--text-caption);
+    margin-bottom: 0.25rem;
+}
+
+/* ----- Upload box ----- */
+.upload-area {
+    border: 2px dashed var(--divider-primary);
+    background: var(--background-input);
+    color: var(--text-caption);
+    cursor: pointer;
+}
+
+/* ----- Buttons ----- */
+.btn-primary {
+    background: var(--button-bg) !important;
+    border: none !important;
+    color: var(--foreground) !important;
+}
+
+/* ----- Dropdown ----- */
+.Select-control {
+    background: var(--background-input) !important;
+}
+.Select--multi .Select-value {
+    background: var(--select-bg) !important;
+    color: var(--select-text) !important;
+}
+
+/* ----- DataTable scroll ----- */
+.dash-table-container .row {
+    overflow-x: auto;
+}
+
+/* ----- Scrollbar ----- */
+::-webkit-scrollbar {
+    height: 6px;
+    background: transparent;
+}
+::-webkit-scrollbar-thumb {
+    background: var(--scroll-bar);
+    border-radius: 3px;
+}
+
+.rc-slider-track {
+    background-color: #007EFF !important;
+}
+
+.rc-slider-handle {
+    border: solid 2px #007EFF !important;
+}
+
+.rc-slider-handle:hover {
+    border-color: #0056b3 !important; 
+}
+
+
+.rc-slider-rail {
+    background-color: #e1e3e6 !important; 
+}
+
+/* ----- table ----- */
+.dash-table-container .dash-spreadsheet-container {
+    border-radius: 8px;
+    border: 1px solid var(--divider-secondary);
+    overflow: hidden;
+}
+
+.dash-table-container .dash-header {
+    background-color: #007EFF !important;
+    color: white !important;
+    font-weight: bold;
+    text-align: center;
+    border: 1px solid var(--divider-secondary);
+}
+
+.dash-table-container .dash-cell {
+    background-color: white;
+    color: #34414d;
+    text-align: left;
+    padding: 8px;
+    font-family: Arial, sans-serif;
+    font-size: 14px;
+    border: 1px solid var(--divider-secondary);
+    cursor: pointer;
+}
+.dash-table-container .dash-cell:hover {
+    background-color: #ebf5ff !important;
+    color: #007EFF !important;
+}
+
+/* odd row highlight */
+.dash-table-container .dash-row-odd {
+    background-color: #f9fbfd !important;
+}
