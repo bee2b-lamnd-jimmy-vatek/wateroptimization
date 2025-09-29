@@ -36,5 +36,5 @@ optimization_section = html.Div([
     ),
 
     html.Br(),
-    dbc.Button("Optimize now", id="btn-optimize", color="primary"),
+    dbc.Button("Optimize now", id="btn-optimize", className="btn-primary"),
 ])

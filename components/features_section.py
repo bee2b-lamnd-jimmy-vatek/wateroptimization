@@ -4,11 +4,11 @@ features_section = html.Div([
     html.Div("Choose target & features", className="section-title"),
 
     html.Div("Select KPI/Objective (target variable)", className="label"),
-    dcc.Dropdown(id="dropdown-target", placeholder="Select..."),
+    dcc.Dropdown(id="dropdown-target", placeholder="Select...",className="my-dropdown"),
     html.Br(),
 
     html.Div("Controllable (MVs) to optimize", className="label"),
-    dcc.Dropdown(id="dropdown-cols", multi=True, placeholder="Select...."),
+    dcc.Dropdown(id="dropdown-cols", multi=True, placeholder="Select....", className="my-dropdown"),
     html.Br(),
 
     html.Div("Context variables (fixed during optimization)", className="label"),
@@ -28,11 +28,10 @@ features_section = html.Div([
     html.Br(),
 
     html.Div("Max tree depth (None = unlimited)", className="label"),
-    dcc.Dropdown(['None'], 'None', id="dropdown-depth", placeholder="Select..."),
+    dcc.Dropdown(['None'], 'None', id="dropdown-depth", placeholder="Select...",className="my-dropdown"),
     html.Br(),
 
     # === Metrics & results ===
-    html.Hr(),
     dbc.Row([
     dbc.Col([
         html.Div("Train metrics", className="section-title"),

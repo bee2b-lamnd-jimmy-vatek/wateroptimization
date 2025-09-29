@@ -19,12 +19,18 @@ def init_callbacks(app):
         content_type, content_string = contents.split(',')
         decoded = base64.b64decode(content_string)
         df = pd.read_csv(io.StringIO(decoded.decode("utf-8")))
+        df = df.round(4)
 
         if target is None or target not in df.columns:
             target = df.columns[-1]
 
         target_options = [{"label": col, "value": col} for col in df.columns]
-        feature_options = [{"label": col, "value": col} for col in df.columns if col != target]
+       
+        numeric_cols = df.select_dtypes(include=["number"]).columns.tolist()
+        feature_options = [
+            {"label": col, "value": col}
+            for col in numeric_cols if col != target
+        ]
 
         return (
             df.head().to_dict("records"),
@@ -62,7 +68,6 @@ def init_callbacks(app):
         if not selected_cols or contents is None:
             return html.Div("No controllable variables selected.")
 
-        # đọc csv từ upload
         import io, base64, pandas as pd
         content_type, content_string = contents.split(",")
         decoded = base64.b64decode(content_string)
@@ -77,19 +82,22 @@ def init_callbacks(app):
                 lower_val = df[col].quantile(0.05)
                 upper_val = df[col].quantile(0.95)
 
+            lower_val = round(lower_val, 6)
+            upper_val = round(upper_val, 6)
+
             inputs.append(
                 html.Div([
                     html.Div(f"{col} lower bound", className="label"),
                     dcc.Input(
                         id={"type": "bound-input", "col": col, "bound": "lower"},
-                        type="number", step=0.01, value=lower_val,
-                        style={"width": "100%", "marginBottom": "10px"}
+                        type="number", step="any", value=lower_val,
+                        style={"width": "100%", "marginBottom": "10px"},className="my-dropdown"
                     ),
                     html.Div(f"{col} upper bound", className="label"),
                     dcc.Input(
                         id={"type": "bound-input", "col": col, "bound": "upper"},
-                        type="number", step=0.01, value=upper_val,
-                        style={"width": "100%", "marginBottom": "20px"}
+                        type="number", step="any", value=upper_val,
+                        style={"width": "100%", "marginBottom": "20px"},className="my-dropdown"
                     ),
                 ])
             )

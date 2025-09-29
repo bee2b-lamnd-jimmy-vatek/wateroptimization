@@ -79,21 +79,49 @@ body {
 /* ----- Upload box ----- */
 .upload-area {
     border: 2px dashed var(--divider-primary);
-    background: var(--background-input);
+    background-color: var(--background-input);
     color: var(--text-caption);
     cursor: pointer;
+}
+
+.upload-area:hover {
+    background-color: #007EFF;
+    color: var(--text-header);
 }
 
 /* ----- Buttons ----- */
 .btn-primary {
     background: var(--button-bg) !important;
     border: none !important;
-    color: var(--foreground) !important;
+    color: var(--text-header) !important;
+    
 }
+
+.btn-primary:hover {
+    background: #007EFF !important;
+   
+    
+}
+
+.my-dropdown {
+    border: 1px solid var(--divider-primary);
+    border-radius: 6px;
+    background: var(--background-input);
+    transition: all 0.2s ease-in-out;
+    color: var(--text-caption);
+}
+
+.my-dropdown:hover {
+    border-color: var(--text-body);
+    color: var(--text-body);
+    cursor: pointer;
+}
+
 
 /* ----- Dropdown ----- */
 .Select-control {
     background: var(--background-input) !important;
+    
 }
 .Select--multi .Select-value {
     background: var(--select-bg) !important;
