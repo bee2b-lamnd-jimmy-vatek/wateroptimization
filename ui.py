@@ -12,7 +12,7 @@ from components.optimization_section import optimization_section
 app = dash.Dash(__name__, external_stylesheets=[dbc.themes.BOOTSTRAP])
 
 app.layout = html.Div([
-    html.Div("Name", className="title"),
+    html.Div("Water optimization", className="title"),
     html.Div([   
         dbc.Col([data_input_section], className="card-box"),
         dbc.Col([features_section],className="card-box"),
