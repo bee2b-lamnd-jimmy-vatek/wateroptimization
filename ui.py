@@ -8,7 +8,7 @@ from components.features_section import features_section
 from components.bounds_rules_section import bounds_rules_section
 from components.context_section import context_section
 from components.optimization_section import optimization_section
-
+from components.optimization_modal import optimization_modal
 app = dash.Dash(__name__, external_stylesheets=[dbc.themes.BOOTSTRAP])
 
 app.layout = html.Div([
@@ -19,6 +19,7 @@ app.layout = html.Div([
         dbc.Col([bounds_rules_section],className="card-box"),
         dbc.Col([context_section],className="card-box"),
         dbc.Col([optimization_section],className="card-box"),   
+        optimization_modal,
     ], style={"display": "flex","flex-direction": "column","gap": "20px" } , className="mt-4 mx-5"),
 ], className="")
 
