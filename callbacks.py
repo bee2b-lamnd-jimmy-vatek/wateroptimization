@@ -1,7 +1,9 @@
-from dash import Input, Output, State, html, dcc, dash_table
+from dash import Input, Output, State, html, dcc, dash_table, MATCH
 import dash
 import pandas as pd, io, base64
 import json
+import dash_bootstrap_components as dbc
+from components.manual_section import manual_section  
 def init_callbacks(app):
     @app.callback(
         [Output("preview-table", "data"),
@@ -165,12 +167,21 @@ def init_callbacks(app):
                     style_table={"overflowX": "auto"},
                     style_cell={"padding": "5px", "textAlign": "left"},
                     style_header={"backgroundColor": "#f8f9fa", "fontWeight": "bold"},
-                )
+                ),
+
+                html.Br(),
+                html.Div([
+                    dbc.Button("⬇ Download JSON", id="btn-download", color="primary", n_clicks=0),
+                    dcc.Download(id="download-json")
+                ]),
+
+                html.Br(),
+                 dbc.Col([manual_section], className="card-box"), 
             ])
 
             return True, result_layout
 
         elif trigger == "close-optimize":
             return False, ""
-
         return is_open, ""
+    

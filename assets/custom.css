@@ -160,6 +160,14 @@ body {
     background-color: #e1e3e6 !important; 
 }
 
+.rc-slider-tooltip-inner {
+    white-space: nowrap !important;
+    min-width: max-content !important;
+}
+
+.rc-slider-mark-text {
+    white-space: nowrap !important;
+}
 /* ----- table ----- */
 .dash-table-container .dash-spreadsheet-container {
     border-radius: 8px;

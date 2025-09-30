@@ -12,7 +12,9 @@ optimization_modal = dbc.Modal(
                     "wordBreak": "break-word",
                     "backgroundColor": "#f8f9fa",
                     "padding": "10px",
-                    "borderRadius": "5px"
+                    "borderRadius": "5px",
+                    
+                
                 }
             )
         ),
@@ -22,6 +24,6 @@ optimization_modal = dbc.Modal(
     ],
     id="modal-optimize",
     is_open=False,
-    size="lg",
+    size="xl",
     backdrop="static"
 )
