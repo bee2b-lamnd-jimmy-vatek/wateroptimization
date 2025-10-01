@@ -109,6 +109,8 @@ body {
     background: var(--background-input);
     transition: all 0.2s ease-in-out;
     color: var(--text-caption);
+    height: 38px;
+    background-color: var(--background-input);
 }
 
 .my-dropdown:hover {
@@ -117,7 +119,38 @@ body {
     cursor: pointer;
 }
 
+.my-dropdown::placeholder {
+    /* color: #007bff;   */
+    font-style: italic;
+}
 
+
+.Select-arrow {
+    border-top-color: #007bff !important;  
+}
+
+.Select__indicator svg {
+    fill: #007bff !important;
+}
+
+.Select-placeholder,
+.Select-value-label {
+    padding-left: 10px !important;  
+}
+
+
+.my-dropdown .Select-control {
+    padding-left: 5px !important;
+}
+input[type="text"],
+input[type="number"] {
+    padding-left: 6px;
+}
+input[type="text"]::placeholder,
+input[type="number"]::placeholder {
+    padding-left: 6px;
+    /* color: #007bff; */
+}
 /* ----- Dropdown ----- */
 .Select-control {
     background: var(--background-input) !important;
@@ -201,4 +234,17 @@ body {
 /* odd row highlight */
 .dash-table-container .dash-row-odd {
     background-color: #f9fbfd !important;
+}
+
+.accordion-button {
+    font-weight: 600;
+    font-size: 20px;
+    color: var(--text-link);  
+    background-color: white; 
+}
+.accordion-button:not(.collapsed) {
+    color: var(--text-link);  
+    background-color: white;
+    font-weight: 600;
+    font-size: 20px;
 }
