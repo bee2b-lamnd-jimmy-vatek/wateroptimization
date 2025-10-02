@@ -248,3 +248,31 @@ input[type="number"]::placeholder {
     font-weight: 600;
     font-size: 20px;
 }
+
+/* ---------tab--------- */
+
+.custom-tabs .tab {
+    padding: 10px 20px;
+    font-weight: bold;
+    color: #333;
+    border-bottom: 3px solid transparent;
+    transition: border-color 0.2s;
+}
+
+.custom-tabs .tab--selected {
+    border-bottom: 3px solid #0d6efd;
+    color: #0d6efd;
+}
+
+.custom-tabs .tab:hover {
+    color: #0d6efd;
+}
+
+.radio-label {
+    margin-right: 25px;  
+    font-weight: 500;   
+}
+
+.radio-btn {
+    margin-right: 6px;  
+}
