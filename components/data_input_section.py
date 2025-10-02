@@ -1,5 +1,5 @@
 from dash import dcc, html, dash_table
-
+import dash_bootstrap_components as dbc
 data_input_section = html.Div([
     html.Div("Upload a CSV file", className="section-title"),
     dcc.Upload(
@@ -26,26 +26,27 @@ data_input_section = html.Div([
     ),
     html.Div(id="train-result", className="label", style={"marginTop": "10px"}),
 
-    html.Hr(),
     html.Div("Manual Prediction", className="section-title"),
-    html.Div([
-        html.Div([
+    dbc.Row([
+        dbc.Col([
             html.Label("Agitator Speed"),
-            dcc.Input(id="input-agitator-speed", type="number", placeholder="Agitator Speed", style={"width": "100%"}),
-        ], style={"marginBottom": "10px"}),
-        html.Div([
+            dcc.Input(id="input-agitator-speed", type="number", placeholder="Agitator Speed",  style={"width": "100%"}, className="my-dropdown"),
+        ],width=6, style={"marginBottom": "10px"}),
+        dbc.Col([
             html.Label("Coolant Flow"),
-            dcc.Input(id="input-coolant-flow", type="number", placeholder="Coolant Flow", style={"width": "100%"}),
-        ], style={"marginBottom": "10px"}),
-        html.Div([
+            dcc.Input(id="input-coolant-flow", type="number", placeholder="Coolant Flow", style={"width": "100%"}, className="my-dropdown"),
+        ],width=6, style={"marginBottom": "10px"}),
+        dbc.Col([
             html.Label("Residence Time"),
-            dcc.Input(id="input-residence-time", type="number", placeholder="Residence Time", style={"width": "100%"}),
-        ], style={"marginBottom": "10px"}),
-        html.Div([
+            dcc.Input(id="input-residence-time", type="number", placeholder="Residence Time", style={"width": "100%"}, className="my-dropdown"),
+        ],width=6, style={"marginBottom": "10px"}),
+        dbc.Col([
             html.Label("Feed Temp"),
-            dcc.Input(id="input-feed-temp", type="number", placeholder="Feed Temp", style={"width": "100%"}),
-        ], style={"marginBottom": "10px"}),
-        html.Button("Predict", id="btn-predict", n_clicks=0, style={"marginTop": "10px"}),
-        html.Div(id="predict-result", className="label", style={"marginTop": "10px"}),
-    ], style={"maxWidth": "400px", "margin": "auto"}),
+            dcc.Input(id="input-feed-temp", type="number", placeholder="Feed Temp", style={"width": "100%"}, className="my-dropdown"),
+        ],width=6, style={"marginBottom": "10px"}),
+        dbc.Col([
+            html.Button("Predict", id="btn-predict", n_clicks=0, className="btn-primary p-2 rounded-3"),
+            html.Div(id="predict-result", className="label", style={"marginTop": "10px","fontWeight": "bold","size": "20px" }),
+        ])
+    ], className="g-3"),
 ])
