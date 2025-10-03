@@ -43,7 +43,7 @@ def train_with_df(df):
     early_stop = EarlyStopping(monitor='val_loss', patience=10, restore_best_weights=True)
     autoencoder.fit(
         X_scaled, X_scaled,
-        epochs=300,               
+        epochs=100,                   
         batch_size=16,
         verbose=1,
         validation_split=0.2,
@@ -91,36 +91,17 @@ def train_with_df(df):
 
     print("BNN-lite model, scaler, and Autoencoder saved.")
 
-    # 11. Monte Carlo Dropout inference (for uncertainty estimation)
-    sample = np.array([[394.33983929854327, 80.01656463304573, 56.18025153633774, 69.97894198886914]])  # Best controllable settings
-    sample_scaled = scaler.transform(sample)
-    sample_latent = encoder.predict(sample_scaled)
+        # # 12. Build decoder separately
+        # encoded_inputs = keras.Input(shape=(latent_dim,))
+        # x = layers.Dense(8, activation='relu')(encoded_inputs)
+        # decoded_outputs = layers.Dense(input_dim, activation='linear')(x)
+        # decoder = keras.Model(encoded_inputs, decoded_outputs)
 
-    results = []
-    for _ in range(50):
-        pred = model(sample_latent, training=True).numpy()[0][0]
-        results.append(pred)
+        # # # 13. Decode latent back to original controllables
+        # # decoded_scaled = decoder.predict(sample_latent)     
+        # # decoded_original = scaler.inverse_transform(decoded_scaled)  
 
-    mean_pred = np.mean(results)
-    std_pred = np.std(results)
-
-    print("\n50 MC Dropout predictions:")
-    print(results)
-    print(f"Mean prediction: {mean_pred:.3f}")
-    print(f"Std deviation (uncertainty): {std_pred:.3f}")
-    print(f"Max difference: {max(results)-min(results):.6f}")
-
-    # 12. Build decoder separately
-    encoded_inputs = keras.Input(shape=(latent_dim,))
-    x = layers.Dense(8, activation='relu')(encoded_inputs)
-    decoded_outputs = layers.Dense(input_dim, activation='linear')(x)
-    decoder = keras.Model(encoded_inputs, decoded_outputs)
-
-    # 13. Decode latent back to original controllables
-    decoded_scaled = decoder.predict(sample_latent)  
-    decoded_original = scaler.inverse_transform(decoded_scaled)  
-
-    print("Decoded controllables from latent (scaled):", decoded_scaled)
-    print("Decoded controllables (real values):", decoded_original)
+        # print("Decoded controllables from latent (scaled):", decoded_scaled)
+        # print("Decoded controllables (real values):", decoded_original)
 
     return {"mae": test_mae, "rmse": rmse_test, "r2": r2_test}
