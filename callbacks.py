@@ -4,6 +4,10 @@ import pandas as pd, io, base64
 import json
 import dash_bootstrap_components as dbc
 from components.manual_section import manual_section  
+from optimization import optimize_global
+from train_model import train_with_df
+from dash.dependencies import ALL
+
 def init_callbacks(app):
     @app.callback(
         [Output("preview-table", "data"),
@@ -18,7 +22,6 @@ def init_callbacks(app):
     def update_table(contents, target, filename):
         if contents is None:
             return [], [], [], [], None
-
         content_type, content_string = contents.split(',')
         decoded = base64.b64decode(content_string)
         df = pd.read_csv(io.StringIO(decoded.decode("utf-8")))
@@ -28,12 +31,12 @@ def init_callbacks(app):
             target = df.columns[-1]
 
         target_options = [{"label": col, "value": col} for col in df.columns]
-       
         numeric_cols = df.select_dtypes(include=["number"]).columns.tolist()
         feature_options = [
             {"label": col, "value": col}
             for col in numeric_cols if col != target
         ]
+        train_with_df(df)
 
         return (
             df.head().to_dict("records"),
@@ -112,29 +115,39 @@ def init_callbacks(app):
         Input("btn-optimize", "n_clicks"),
         Input("close-optimize", "n_clicks"),
         State("modal-optimize", "is_open"),
+        State({"type": "bound-input", "col": ALL, "bound": ALL}, "value"),
+        State({"type": "bound-input", "col": ALL, "bound": ALL}, "id"),
         prevent_initial_call=True
     )
-    def toggle_modal(open_click, close_click, is_open):
+    def toggle_modal(open_click, close_click, is_open, bound_values, bound_ids):
         ctx = dash.callback_context
         if not ctx.triggered:
             return is_open, ""
-
         trigger = ctx.triggered[0]["prop_id"].split(".")[0]
 
         if trigger == "btn-optimize":
+            custom_bounds = {}
+            for val, id_ in zip(bound_values, bound_ids):
+                col = id_["col"]
+                btype = id_["bound"]
+                if col not in custom_bounds:
+                    custom_bounds[col] = [None, None]
+                if btype == "lower":
+                    custom_bounds[col][0] = val
+                elif btype == "upper":
+                    custom_bounds[col][1] = val
+            custom_bounds = {k: tuple(v) if None not in v else None for k, v in custom_bounds.items()}
+
+            best_x, best_quality = optimize_global(n_trials=200, custom_bounds=custom_bounds)
             recommended_setpoint = {
-                "setpoints": {
-                    "agigator_speed": 248.27,
-                    "coolant_flow": 117.63,
-                    "residence_time": 54.93,
-                    "feed_temp": 41.74,
-                },
-                "expected_target_mean": 39.69,
+                "setpoints": best_x,
+                "expected_target_mean": round(best_quality, 6),
                 "predicted_sigma": 0.103,
                 "risk_adjusted_objective": 39.72,
                 "distance_to_training (Mahalanobis)": 2.59,
                 "goal": "Maximize",
-                "lambda_uncertainty": 0.3
+                "lambda_uncertainty": 0.3,
+                "bounds_used": {k: v for k, v in custom_bounds.items() if v is not None}
             }
 
             ramp_plan = [
