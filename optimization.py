@@ -59,9 +59,3 @@ def optimize_global(n_trials=200, custom_bounds=None):
     best_x = {col: study.best_params[col] for col in controllable_cols}
     best_quality = -study.best_value
     return best_x, best_quality
-
-# best_x, best_quality = optimize_global(n_trials=500)
-
-# print("✅ Best controllable settings:", best_x)
-# print("✅ Predicted peak quality:", best_quality)
-# print("✅ Optimization complete!")

@@ -9,6 +9,7 @@ from tensorflow.keras.callbacks import EarlyStopping
 import joblib
 import random
 import tensorflow as tf
+from scipy.spatial import distance
 
 # Set random seed for reproducibility
 seed = 42
@@ -28,7 +29,7 @@ def train_with_df(df):
 
     # 4. Train Autoencoder for nonlinear dimensionality reduction
     input_dim = X_scaled.shape[1]
-    latent_dim = 4  # Tăng latent_dim từ 2 lên 4
+    latent_dim = 4 
 
     inputs = keras.Input(shape=(input_dim,))
     encoded = layers.Dense(8, activation='relu')(inputs)
@@ -91,17 +92,46 @@ def train_with_df(df):
 
     print("BNN-lite model, scaler, and Autoencoder saved.")
 
-        # # 12. Build decoder separately
-        # encoded_inputs = keras.Input(shape=(latent_dim,))
-        # x = layers.Dense(8, activation='relu')(encoded_inputs)
-        # decoded_outputs = layers.Dense(input_dim, activation='linear')(x)
-        # decoder = keras.Model(encoded_inputs, decoded_outputs)
+    y_train_pred = model.predict(X_train, verbose=0).flatten()
+    mae_train = mean_absolute_error(y_train, y_train_pred)
+    rmse_train = np.sqrt(mean_squared_error(y_train, y_train_pred))
+    r2_train = r2_score(y_train, y_train_pred)
+    train_metrics = {"R2": round(r2_train, 2), "MAE": round(mae_train, 2), "RMSE": round(rmse_train, 2)}
+    print("Train metrics:", train_metrics)
 
-        # # # 13. Decode latent back to original controllables
-        # # decoded_scaled = decoder.predict(sample_latent)     
-        # # decoded_original = scaler.inverse_transform(decoded_scaled)  
+    preds_mc = [model(X_test, training=True).numpy().flatten() for _ in range(50)]
+    preds_mc = np.stack(preds_mc, axis=1)
+    pred_sd = np.median(np.std(preds_mc, axis=1))
+    print(f"Pred SD (median) on test set: {pred_sd:.3f}")
 
-        # print("Decoded controllables from latent (scaled):", decoded_scaled)
-        # print("Decoded controllables (real values):", decoded_original)
+    mean_train = np.mean(X_train, axis=0)
+    cov_train = np.cov(X_train, rowvar=False)
+    inv_cov_train = np.linalg.pinv(cov_train)
+    maha_train = [distance.mahalanobis(x, mean_train, inv_cov_train) for x in X_train]
+    maha_test = [distance.mahalanobis(x, mean_train, inv_cov_train) for x in X_test]
 
-    return {"mae": test_mae, "rmse": rmse_test, "r2": r2_test}
+    dist_metrics = {
+        "Mahalanobis (train median)": round(np.median(maha_train), 2),
+        "Mahalanobis (test median)": round(np.median(maha_test), 2),
+        "Mahalanobis (test 95th pct)": round(np.percentile(maha_test, 95), 2)
+    }
+    print("Distribution & safety checks:", dist_metrics)
+
+    return {
+        "train": {
+            "R2": round(r2_train, 2),
+            "MAE": round(mae_train, 2),
+            "RMSE": round(rmse_train, 2)
+        },
+        "test": {
+            "R2": round(r2_test, 2),
+            "MAE": round(test_mae, 2),
+            "RMSE": round(rmse_test, 2),
+            "Pred SD (median)": round(float(pred_sd), 3)
+        },
+        "dist": {
+            "Mahalanobis (train median)": round(np.median(maha_train), 2),
+            "Mahalanobis (test median)": round(np.median(maha_test), 2),
+            "Mahalanobis (test 95th pct)": round(np.percentile(maha_test, 95), 2)
+        }
+    }
