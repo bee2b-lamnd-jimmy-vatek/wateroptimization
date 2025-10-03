@@ -4,32 +4,6 @@ import pandas as pd, io, base64
 import json
 import dash_bootstrap_components as dbc
 from components.manual_section import manual_section  
-from optimization import optimize_global
-from train_model import train_with_df
-from predict_model import predict_quality
-import base64
-import io
-import pandas as pd
-from dash.dependencies import Input, Output, State
-
-ramp_plan = [
-    {"mv": "agitator_speed", "current": 200, "target": 350, "max_step": 10, "steps": 15, "path": [200, 210, 220, 230, 240, 250, 260, 270, 280, 290, 300, 310, 320, 330, 340, 350]},
-    # Thêm các biến khác nếu muốn
-]
-drivers = [
-    {"feature": "agitator_speed", "importance": 0.45},
-    {"feature": "coolant_flow", "importance": 0.35},
-    {"feature": "residence_time", "importance": 0.15},
-    {"feature": "feed_temp", "importance": 0.05},
-]
-def parse_contents(contents, filename):
-    content_type, content_string = contents.split(',')
-    decoded = base64.b64decode(content_string)
-    if 'csv' in filename:
-        df = pd.read_csv(io.StringIO(decoded.decode('utf-8')))
-        return df
-    return None
-
 def init_callbacks(app):
     @app.callback(
         [Output("preview-table", "data"),
@@ -148,14 +122,39 @@ def init_callbacks(app):
         trigger = ctx.triggered[0]["prop_id"].split(".")[0]
 
         if trigger == "btn-optimize":
-            best_x, best_quality = optimize_global(n_trials=200)
-            # Tạo layout kết quả từ best_x, best_quality
+            recommended_setpoint = {
+                "setpoints": {
+                    "agigator_speed": 248.27,
+                    "coolant_flow": 117.63,
+                    "residence_time": 54.93,
+                    "feed_temp": 41.74,
+                },
+                "expected_target_mean": 39.69,
+                "predicted_sigma": 0.103,
+                "risk_adjusted_objective": 39.72,
+                "distance_to_training (Mahalanobis)": 2.59,
+                "goal": "Maximize",
+                "lambda_uncertainty": 0.3
+            }
+
+            ramp_plan = [
+                {"mv": "agigator_speed", "current": 301.67, "target": 248.27,"max_step":18.639, "steps": 3,"path":[283.87, 266.07, 248.27]},
+                {"mv": "coolant_flow", "current": 105.71, "target": 117.63,"max_step":3.529, "steps":4,"path": [108.69, 111.67, 114.65, 117.63]},
+                {"mv": "residence time","current": 53.71, "target": 54.92,"max_step":2.639, "steps":1,"path": [54.92]},
+                {"mv": "feed_temp","current": 44.97, "target": 41.74,"max_step":2.729, "steps":2,"path": [043.35,41.74]}
+
+            ]
+
+            drivers = [
+                {"feature": "feed_temp", "importance": 0.6823},
+                {"feature": "agigator_speed", "importance": 0.2146},
+                {"feature": "residence_time", "importance": 0.0786},
+                {"feature": "coolant_flow", "importance": 0.0244},
+            ]
+
             result_layout = html.Div([
                 html.H4("Recommended setpoint"),
-                html.Pre(json.dumps({
-                    "setpoints": best_x,
-                    "expected_target_mean": best_quality
-                }, indent=4)),
+                html.Pre(json.dumps(recommended_setpoint, indent=4)),
 
                 html.H4("Ramp plan (rate-limited moves)"),
                 html.Pre(json.dumps(ramp_plan, indent=4)),
@@ -185,30 +184,3 @@ def init_callbacks(app):
         elif trigger == "close-optimize":
             return False, ""
         return is_open, ""
-
-    @app.callback(
-        Output('train-result', 'children'),
-        Input('upload-data', 'contents'),
-        State('upload-data', 'filename')
-    )
-    def train_callback(contents, filename):
-        if contents:
-            df = parse_contents(contents, filename)
-            result = train_with_df(df)
-            return f"MAE: {result['mae']:.3f}, RMSE: {result['rmse']:.3f}, R2: {result['r2']:.3f}"
-        return ""
-
-    @app.callback(
-        Output('predict-result', 'children'),
-        Input('btn-predict', 'n_clicks'),
-        State('input-agitator-speed', 'value'),
-        State('input-coolant-flow', 'value'),
-        State('input-residence-time', 'value'),
-        State('input-feed-temp', 'value'),
-        prevent_initial_call=True
-    )
-    def manual_predict(n_clicks, agitator_speed, coolant_flow, residence_time, feed_temp):
-        if n_clicks and None not in (agitator_speed, coolant_flow, residence_time, feed_temp):
-            result = predict_quality(agitator_speed, coolant_flow, residence_time, feed_temp)
-            return f"Prediction: {result['mean_prediction']:.3f} ± {result['uncertainty']:.3f}"
-        return ""
