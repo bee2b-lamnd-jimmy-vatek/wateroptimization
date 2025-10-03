@@ -276,3 +276,31 @@ input[type="number"]::placeholder {
 .radio-btn {
     margin-right: 6px;  
 }
+
+.dash-spinner {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+#loading-table .dash-spinner::after {
+  content: "Loading preview table…";
+  margin-top: 40px;
+  text-align: center;
+  color: gray;
+  font-size: 14px;
+  margin-left: -80px;
+  width: 100%;
+  white-space: nowrap;
+}
+
+#loading-modal .dash-spinner::after {
+  content: "Loading Modal…";
+  margin-top: 40px;
+  text-align: center;
+  color: gray;
+  font-size: 14px;
+  margin-left: -60px;
+  width: 100%;
+  white-space: nowrap;
+}

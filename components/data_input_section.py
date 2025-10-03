@@ -20,7 +20,7 @@ data_input_section = html.Div([
     ),
     html.Br(),
     html.Div("Preview:", className="label"),
-   dcc.Loading(
+    dcc.Loading(
         id="loading-table",
         type="circle", 
         children=dash_table.DataTable(
