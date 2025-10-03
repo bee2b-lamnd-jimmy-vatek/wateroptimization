@@ -8,7 +8,11 @@ from optimization import optimize_global
 from train_model import train_with_df
 from dash.dependencies import ALL
 
+last_train_result = {}
+
 def init_callbacks(app):
+    global last_train_result
+
     @app.callback(
         [Output("preview-table", "data"),
          Output("preview-table", "columns"),
@@ -20,6 +24,7 @@ def init_callbacks(app):
         State("upload-data", "filename")
     )
     def update_table(contents, target, filename):
+        global last_train_result
         if contents is None:
             return [], [], [], [], None
         content_type, content_string = contents.split(',')
@@ -36,7 +41,8 @@ def init_callbacks(app):
             {"label": col, "value": col}
             for col in numeric_cols if col != target
         ]
-        train_with_df(df)
+        # Lưu lại kết quả training
+        last_train_result = train_with_df(df)
 
         return (
             df.head().to_dict("records"),
@@ -48,18 +54,15 @@ def init_callbacks(app):
     
     @app.callback(
         [Output("train-metrics", "children"),
-        Output("test-metrics", "children"),
-        Output("dist-metrics", "children")],
+         Output("test-metrics", "children"),
+         Output("dist-metrics", "children")],
         Input("dropdown-target", "value") 
     )
     def update_metrics(target):
-        train = {"R2": 0.96, "MAE": 0.75, "RMSE": 0.92}
-        test = {"R2": 0.83, "MAE": 1.75, "RMSE": 2.22, "Pred SD (median)": 0.116}
-        dist = {
-            "Mahalanobis (train median)": 1.94,
-            "Mahalanobis (test median)": 1.94,
-            "Mahalanobis (test 95th pct)": 2.60
-        }
+        global last_train_result
+        train = last_train_result.get("train", {})
+        test = last_train_result.get("test", {})
+        dist = last_train_result.get("dist", {})
         return json.dumps(train, indent=4), json.dumps(test, indent=4), json.dumps(dist, indent=4)
 
 
