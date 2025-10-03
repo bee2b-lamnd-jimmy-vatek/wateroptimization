@@ -20,8 +20,13 @@ data_input_section = html.Div([
     ),
     html.Br(),
     html.Div("Preview:", className="label"),
-    dash_table.DataTable(
-        id="preview-table",
-        style_table={"overflowX": "auto"},
+   dcc.Loading(
+        id="loading-table",
+        type="circle", 
+        children=dash_table.DataTable(
+            id="preview-table",
+            style_table={"overflowX": "auto"},
+        ),
+        fullscreen=False  
     ),
 ])
